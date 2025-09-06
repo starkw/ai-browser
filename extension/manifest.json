@@ -1,0 +1,28 @@
+{
+  "manifest_version": 3,
+  "name": "AI Browser Assistant",
+  "version": "0.1.0",
+  "description": "Toggle an AI assistant overlay (Alt+K) or via context menu; answers with your /ask endpoint.",
+  "permissions": ["activeTab", "contextMenus", "storage"],
+  "host_permissions": [
+    "http://localhost:3000/*",
+    "https://localhost:3000/*"
+  ],
+  "background": { "service_worker": "background.js" },
+  "commands": {
+    "toggle-assistant": {
+      "suggested_key": { "default": "Alt+K" },
+      "description": "Toggle AI Assistant overlay"
+    }
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "css": ["content.css"],
+      "run_at": "document_idle"
+    }
+  ],
+  "options_page": "options.html"
+}
+

@@ -1,0 +1,38 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>AI Assistant Options</title>
+    <style>
+      body{font-family:system-ui,Segoe UI,Arial; padding:24px}
+      label{display:block; margin-bottom:8px}
+      input{width:420px; padding:8px}
+      .tip{opacity:.7; font-size:12px; margin-top:8px}
+    </style>
+  </head>
+  <body>
+    <h3>基础设置</h3>
+    <label>Base URL（你的站点地址，如 https://your-host）</label>
+    <input id="base" placeholder="https://your-host" />
+    <div class="tip">用于加载 /ask 面板的域名与协议。默认 http://localhost:3000</div>
+    <p style="margin-top:16px"><label><input type="checkbox" id="showFab" /> 显示右下角悬浮按钮</label></p>
+    <p><button id="save">保存</button> <span id="status"></span></p>
+    <script>
+      const def = 'http://localhost:3000';
+      chrome.storage.sync.get({ baseUrl: def, showFab: false }, (data)=>{
+        document.getElementById('base').value = data.baseUrl || def;
+        document.getElementById('showFab').checked = !!data.showFab;
+      });
+      document.getElementById('save').onclick = () => {
+        const v = document.getElementById('base').value.trim() || def;
+        const showFab = document.getElementById('showFab').checked;
+        chrome.storage.sync.set({ baseUrl: v, showFab }, ()=>{
+          const s = document.getElementById('status');
+          s.textContent = '已保存';
+          setTimeout(()=> s.textContent = '', 1500);
+        });
+      }
+    </script>
+  </body>
+  </html>
+
