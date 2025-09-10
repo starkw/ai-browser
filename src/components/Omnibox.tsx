@@ -95,15 +95,7 @@ export default function Omnibox() {
 
   return (
     <>
-      {!open ? (
-        <button
-          className="fixed right-4 bottom-4 z-40 rounded-full shadow bg-foreground text-background text-sm px-3 py-2 opacity-80 hover:opacity-100"
-          title="打开命令面板（/ 或 Ctrl/Cmd+K, Ctrl/Cmd+Shift+K）"
-          onClick={() => setOpen(true)}
-        >
-          ⌘K
-        </button>
-      ) : null}
+      {/* 右下角唤起按钮按需隐藏：已去除 */}
 
       {!open ? null : (
         <div className="fixed inset-0 z-50 bg-black/50 flex items-start justify-center pt-24">

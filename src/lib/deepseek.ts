@@ -39,6 +39,44 @@ export async function askDeepSeek(params: {
   return { text: output, model: data?.model || model };
 }
 
+export type ChatMessage = {
+  role: "system" | "user" | "assistant";
+  content: string;
+};
+
+// 通用对话：接受多轮消息，返回文本与模型名
+export async function chatDeepSeek(params: {
+  messages: ChatMessage[];
+  apiKey?: string;
+  model?: string;
+}): Promise<{ text: string; model: string }> {
+  const apiKey = params.apiKey || process.env.DEEPSEEK_API_KEY;
+  if (!apiKey) throw new Error("Missing DEEPSEEK_API_KEY");
+  const model = params.model || process.env.DEEPSEEK_MODEL || "deepseek-chat";
+
+  const res = await fetch(DEEPSEEK_API_URL, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
+    body: JSON.stringify({
+      model,
+      messages: params.messages,
+      temperature: 0.2,
+      stream: false,
+      max_tokens: 800,
+    }),
+  });
+  if (!res.ok) {
+    const t = await res.text().catch(() => "");
+    throw new Error(`DeepSeek API ${res.status}: ${t || res.statusText}`);
+  }
+  type DSMessage = { content?: string };
+  type DSChoice = { message?: DSMessage };
+  type DSResponse = { choices?: DSChoice[]; model?: string };
+  const data = (await res.json()) as DSResponse;
+  const output = (data?.choices?.[0]?.message?.content || "").trim();
+  return { text: output, model: data?.model || model };
+}
+
 // 旧摘要能力已移除
 
 export type DetailMode = "brief" | "standard" | "detailed";

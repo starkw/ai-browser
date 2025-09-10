@@ -29,10 +29,11 @@ export default function SearchBox() {
       return [{ id: "open", href: url, urlLabel: url }];
     }
     return [
+      // 将 Chat 放到第一位
+      { id: "ask", href: `/ask?q=${encodeURIComponent(t)}`, query: t, provider: "Chat" },
       { id: "google", href: `https://www.google.com/search?q=${encodeURIComponent(t)}`, query: t, provider: "Google" },
       { id: "bing", href: `https://www.bing.com/search?q=${encodeURIComponent(t)}`, query: t, provider: "Bing" },
       { id: "toutiao", href: `https://so.toutiao.com/search?keyword=${encodeURIComponent(t)}`, query: t, provider: "头条" },
-      { id: "ask", href: `/ask?q=${encodeURIComponent(t)}`, query: t, provider: "Chat" },
     ];
   }, [q]);
 
