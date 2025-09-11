@@ -4,8 +4,6 @@ import * as path from "path";
 import pdfParse from "pdf-parse";
 import mammoth from "mammoth"; // docx
 import * as XLSX from "xlsx";
-import Tesseract from "tesseract.js";
-import sharp from "sharp";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -43,28 +41,10 @@ async function parseBuffer(filePath: string, mime: string, origName: string): Pr
     });
     return texts.join("\n\n");
   }
-  // 图片：OCR
+  // 图片：OCR（暂时降级为未启用，避免在 Render 编译原生依赖失败）
   if (mime.startsWith("image/") || [".png", ".jpg", ".jpeg", ".webp", ".bmp"].includes(ext)) {
-    try {
-      // 预处理：放大、灰度、增强对比
-      let pre = buf;
-      try {
-        pre = await sharp(buf).resize({ width: 1800, withoutEnlargement: false }).grayscale().normalize().toBuffer();
-      } catch {}
-      // 优先尝试中英混合，远程加载语言包
-      const { data } = await Tesseract.recognize(pre, "chi_sim+eng", {
-        langPath: "https://tessdata.projectnaptha.com/4.0.0",
-      });
-      if (data?.text?.trim()) return data.text;
-    } catch {}
-    try {
-      const { data } = await Tesseract.recognize(buf, "eng", {
-        langPath: "https://tessdata.projectnaptha.com/4.0.0",
-      });
-      return data.text || "";
-    } catch {
-      return "";
-    }
+    // 如果未来需要，可改为调用云 OCR 或在独立服务启用 tesseract/sharp
+    return "";
   }
   // 兜底：存为二进制，不解析
   return "";

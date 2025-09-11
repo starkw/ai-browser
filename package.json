@@ -18,8 +18,7 @@
     "prisma": "^6.14.0",
     "react": "19.1.0",
     "react-dom": "19.1.0",
-    "sharp": "^0.33.4",
-    "tesseract.js": "^5.0.5",
+    
     "xlsx": "^0.18.5"
   },
   "devDependencies": {
