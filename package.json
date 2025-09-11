@@ -20,7 +20,7 @@
     "react-dom": "19.1.0",
     "sharp": "^0.33.4",
     "tesseract.js": "^5.0.5",
-    "xlsx": "^0.19.3"
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
