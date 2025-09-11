@@ -49,7 +49,7 @@ export async function POST(req: NextRequest) {
     if (!isUrlLike(arg)) return Response.json({ error: "not a valid url" }, { status: 400 });
     const url = /^https?:\/\//i.test(arg) ? arg : `https://${arg}`;
     try {
-      await prisma.savedLink.create({ data: { url, userId: userId ?? null } });
+      await prisma.savedLink.create({ data: { url } });
       return Response.json({ action: "saved", url });
     } catch (e) {
       const msg = e instanceof Error ? e.message : String(e);
