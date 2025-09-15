@@ -15,12 +15,16 @@ function ensureDir() {
 }
 
 async function parseBuffer(filePath: string, mime: string, origName: string): Promise<string> {
-  const ext = path.extname(origName).toLowerCase();
-  const buf = await fs.promises.readFile(filePath);
-  if (mime.includes("pdf") || ext === ".pdf") {
-    const data = await pdfParse(buf);
-    return data.text || "";
-  }
+  try {
+    const ext = path.extname(origName).toLowerCase();
+    if (!fs.existsSync(filePath)) {
+      throw new Error(`File not found: ${filePath}`);
+    }
+    const buf = await fs.promises.readFile(filePath);
+    if (mime.includes("pdf") || ext === ".pdf") {
+      const data = await pdfParse(buf);
+      return data.text || "";
+    }
   if (ext === ".pptx") {
     // 简化：对 PPTX 作为 zip 二进制不做深入解析，返回占位提示
     return "(PPTX 暂不支持内容提取，后续将完善)";
@@ -46,8 +50,16 @@ async function parseBuffer(filePath: string, mime: string, origName: string): Pr
     // 如果未来需要，可改为调用云 OCR 或在独立服务启用 tesseract/sharp
     return "";
   }
-  // 兜底：存为二进制，不解析
-  return "";
+    // 兜底：存为二进制，不解析
+    return "";
+  } catch (error) {
+    console.error("Parse error:", error);
+    return "";
+  }
+}
+
+export async function GET() {
+  return NextResponse.json({ message: "Upload endpoint ready" });
 }
 
 export async function POST(req: Request) {
