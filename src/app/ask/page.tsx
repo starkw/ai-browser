@@ -21,7 +21,7 @@ export default function AskPage() {
     const q = (prompt ?? input).trim();
     if (!q || loading) return;
     if (!prompt) setInput("");
-    const next = [...messages, { role: "user", content: q }];
+    const next = [...messages, { role: "user" as const, content: q }];
     setMessages(next);
     setLoading(true);
     setFiles([]); // 清空选择
@@ -33,10 +33,10 @@ export default function AskPage() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data?.error || res.statusText);
-      setMessages((m) => [...m, { role: "assistant", content: data.text }]);
+        setMessages((m) => [...m, { role: "assistant" as const, content: data.text }]);
     } catch (e) {
       const msg = e instanceof Error ? e.message : String(e);
-      setMessages((m) => [...m, { role: "assistant", content: `出错：${msg}` }]);
+      setMessages((m) => [...m, { role: "assistant" as const, content: `出错：${msg}` }]);
     } finally {
       setLoading(false);
     }
