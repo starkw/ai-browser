@@ -3,6 +3,8 @@ import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import type { ChatMessage } from "@/lib/deepseek";
 
+export const dynamic = 'force-dynamic';
+
 export default function AskPage() {
   const [messages, setMessages] = useState<ChatMessage[]>([
     { role: "system", content: "你是耐心、简洁的中文助手。" },
@@ -45,6 +47,7 @@ export default function AskPage() {
   // 首页跳转带 q 时，自动发起首轮问答
   const searchParams = useSearchParams();
   useEffect(() => {
+    if (typeof window === 'undefined') return; // 跳过服务端渲染
     const q = searchParams.get("q");
     if (q && messages.length === 1 && !loading) {
       // 立即触发一次
