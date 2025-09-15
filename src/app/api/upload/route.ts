@@ -1,9 +1,6 @@
 import { NextResponse } from "next/server";
 import * as fs from "fs";
 import * as path from "path";
-import pdfParse from "pdf-parse";
-import mammoth from "mammoth"; // docx
-import * as XLSX from "xlsx";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -22,6 +19,8 @@ async function parseBuffer(filePath: string, mime: string, origName: string): Pr
     }
     const buf = await fs.promises.readFile(filePath);
     if (mime.includes("pdf") || ext === ".pdf") {
+      // 动态导入 pdf-parse 避免构建时问题
+      const pdfParse = (await import("pdf-parse")).default;
       const data = await pdfParse(buf);
       return data.text || "";
     }
@@ -33,10 +32,12 @@ async function parseBuffer(filePath: string, mime: string, origName: string): Pr
     return buf.toString("utf-8");
   }
   if (ext === ".docx") {
+    const mammoth = await import("mammoth");
     const res = await mammoth.extractRawText({ buffer: buf });
     return res.value || "";
   }
   if (ext === ".xlsx" || ext === ".xls") {
+    const XLSX = await import("xlsx");
     const wb = XLSX.read(buf, { type: "buffer" });
     const texts: string[] = [];
     wb.SheetNames.forEach((name) => {
