@@ -1,9 +1,9 @@
 import { Suspense } from "react";
-import dynamic from "next/dynamic";
+import dynamicImport from "next/dynamic";
 
 export const dynamic = 'force-dynamic';
 
-const AskContent = dynamic(() => import("./AskContent"), {
+const AskContent = dynamicImport(() => import("./AskContent"), {
   ssr: false,
   loading: () => <div className="h-screen flex items-center justify-center">加载中...</div>
 });
