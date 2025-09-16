@@ -1,7 +1,6 @@
+"use client";
 import { Suspense } from "react";
 import dynamicImport from "next/dynamic";
-
-export const dynamic = 'force-dynamic';
 
 const AskContent = dynamicImport(() => import("./AskContent"), {
   ssr: false,
