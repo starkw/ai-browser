@@ -3,7 +3,7 @@ import { IntentClassifier } from '@/lib/smart-omnibox/intent-classifier';
 import { PredictionEngine } from '@/lib/smart-omnibox/prediction-engine';
 import { ContextAwareSuggestionProvider } from '@/lib/smart-omnibox/context-analyzer';
 import { SmartQuery, Suggestion, QueryType, UserBehaviorModel, SmartSuggestionsRequest } from '@/types/smart-omnibox';
-import { prisma } from '@/lib/prisma';
+import prisma from '@/lib/prisma';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -115,11 +115,11 @@ async function generateSuggestions(query: SmartQuery, userId?: string): Promise<
 async function getUserBehaviorModel(userId: string): Promise<UserBehaviorModel> {
   try {
     // 从数据库获取用户历史查询
-    const queryHistory = await prisma.queryHistory?.findMany({
+    const queryHistory = await prisma.queryHistory.findMany({
       where: { user_id: userId },
       orderBy: { created_at: 'desc' },
       take: 100
-    }) || [];
+    }).catch(() => []);
     
     // 分析用户行为模式
     const frequentQueries = queryHistory
@@ -212,11 +212,11 @@ async function searchHistory(target: string, modifiers: string[], userId?: strin
       ];
     }
     
-    const historyResults = await prisma.pageContentCache?.findMany({
+    const historyResults = await prisma.pageContentCache.findMany({
       where: whereClause,
       orderBy: { last_visit: 'desc' },
       take: 5
-    }) || [];
+    }).catch(() => []);
     
     return historyResults.map((result, index) => ({
       id: `history-${result.id}`,
@@ -319,7 +319,7 @@ function getDefaultSuggestions(input: string): Suggestion[] {
  */
 async function recordQueryHistory(query: SmartQuery, userId: string): Promise<void> {
   try {
-    await prisma.queryHistory?.create({
+    await prisma.queryHistory.create({
       data: {
         user_id: userId,
         query_text: query.input,
@@ -328,7 +328,7 @@ async function recordQueryHistory(query: SmartQuery, userId: string): Promise<vo
         context: query.context as any,
         created_at: new Date()
       }
-    });
+    }).catch(console.error);
   } catch (error) {
     console.error('Error recording query history:', error);
   }
