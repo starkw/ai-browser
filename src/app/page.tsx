@@ -71,7 +71,7 @@ export default function Home() {
         {/* 智能地址栏 */}
         <SmartOmnibox 
           onSelect={handleSuggestionSelect}
-          placeholder="🤖 试试问我：帮我找昨天看过的 AI 文章，或者直接问问题..."
+          placeholder="天马行空什么都可以问"
           className="max-w-3xl mx-auto"
         />
         
