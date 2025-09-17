@@ -1,11 +1,8 @@
 'use client';
 import SmartOmnibox from "@/components/SmartOmnibox";
-import SearchBox from "@/components/SearchBox";
 import { Suggestion } from "@/types/smart-omnibox";
-import { useState } from "react";
 
 export default function Home() {
-  const [showLegacySearch, setShowLegacySearch] = useState(false);
   
   const handleSuggestionSelect = (suggestion: Suggestion) => {
     console.log('Selected suggestion:', suggestion);
@@ -72,30 +69,11 @@ export default function Home() {
         </div>
         
         {/* 智能地址栏 */}
-        <div className="space-y-4">
-          <SmartOmnibox 
-            onSelect={handleSuggestionSelect}
-            placeholder="🤖 试试问我：帮我找昨天看过的 AI 文章，或者直接问问题..."
-            className="max-w-3xl mx-auto"
-          />
-          
-          {/* 切换到传统搜索 */}
-          <div className="text-center">
-            <button
-              onClick={() => setShowLegacySearch(!showLegacySearch)}
-              className="text-sm text-gray-500 hover:text-gray-700 transition-colors"
-            >
-              {showLegacySearch ? '使用智能搜索 ✨' : '使用传统搜索'}
-            </button>
-          </div>
-          
-          {/* 传统搜索框 */}
-          {showLegacySearch && (
-            <div className="max-w-3xl mx-auto">
-              <SearchBox />
-            </div>
-          )}
-        </div>
+        <SmartOmnibox 
+          onSelect={handleSuggestionSelect}
+          placeholder="🤖 试试问我：帮我找昨天看过的 AI 文章，或者直接问问题..."
+          className="max-w-3xl mx-auto"
+        />
         
       </div>
     </div>
