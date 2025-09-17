@@ -1,3 +1,6 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
 generator client {
   provider = "prisma-client-js"
 }
@@ -7,31 +10,22 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id             String    @id @default(cuid())
-  name           String?
-  email          String?   @unique
-  emailVerified  DateTime?
-  image          String?
-  accounts       Account[]
-  sessions       Session[]
-}
-
+// NextAuth.js 相关表
 model Account {
-  id                 String  @id @default(cuid())
-  userId             String
-  type               String
-  provider           String
-  providerAccountId  String
-  refresh_token      String?
-  access_token       String?
-  expires_at         Int?
-  token_type         String?
-  scope              String?
-  id_token           String?
-  session_state      String?
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
 
-  user User @relation(fields: [userId], references: [id])
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
 }
@@ -41,8 +35,17 @@ model Session {
   sessionToken String   @unique
   userId       String
   expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
 
-  user User @relation(fields: [userId], references: [id])
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  accounts      Account[]
+  sessions      Session[]
 }
 
 model VerificationToken {
@@ -53,20 +56,63 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
+// 应用功能相关表
 model Note {
-  id        Int      @id @default(autoincrement())
+  id        String   @id @default(cuid())
   title     String
-  content   String?
+  content   String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 model SavedLink {
-  id        Int      @id @default(autoincrement())
+  id        String   @id @default(cuid())
   url       String
   title     String?
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
 }
 
- 
+// 智能地址栏相关表
+model QueryHistory {
+  id                   String   @id @default(cuid())
+  user_id              String?
+  query_text           String
+  query_type           String?
+  intent               Json?
+  context              Json?
+  selected_suggestion_id String?
+  success              Boolean  @default(false)
+  created_at           DateTime @default(now())
+
+  @@map("query_history")
+}
+
+model UserBehavior {
+  id         String   @id @default(cuid())
+  user_id    String?
+  session_id String?
+  action     String
+  target     String?
+  context    Json?
+  timestamp  DateTime @default(now())
+
+  @@map("user_behavior")
+}
+
+// 增强页面内容缓存
+model PageContentCache {
+  id           String    @id @default(cuid())
+  url          String    @unique
+  title        String?
+  content      String?
+  summary      String?
+  headings     Json?
+  last_updated DateTime?
+  visit_count  Int       @default(1)
+  last_visit   DateTime?
+  keywords     String?   // 使用逗号分隔的字符串存储关键词
+  category     String?
+  created_at   DateTime  @default(now())
+
+  @@map("page_content_cache")
+}
