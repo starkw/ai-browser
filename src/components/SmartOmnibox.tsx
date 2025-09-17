@@ -102,7 +102,37 @@ export default function SmartOmnibox({
       case 'Tab':
         e.preventDefault();
         if (selectedIndex >= 0 && suggestions[selectedIndex]) {
-          setInput(suggestions[selectedIndex].title);
+          const suggestion = suggestions[selectedIndex];
+          // 使用建议的标题作为补全内容
+          let completionText = suggestion.title;
+          
+          // 对于 AI 回答类型，去掉 "AI 回答：" 前缀
+          if (suggestion.type === 'ai_answer' && completionText.startsWith('AI 回答：')) {
+            completionText = completionText.replace('AI 回答：', '').trim();
+          }
+          
+          setInput(completionText);
+          // 补全后保持建议列表打开，但重置选中状态
+          setSelectedIndex(-1);
+          // 确保输入框保持焦点
+          setTimeout(() => {
+            inputRef.current?.focus();
+          }, 0);
+        } else if (suggestions.length > 0) {
+          // 如果没有选中项，默认补全第一个建议
+          const firstSuggestion = suggestions[0];
+          let completionText = firstSuggestion.title;
+          
+          if (firstSuggestion.type === 'ai_answer' && completionText.startsWith('AI 回答：')) {
+            completionText = completionText.replace('AI 回答：', '').trim();
+          }
+          
+          setInput(completionText);
+          setSelectedIndex(-1);
+          // 确保输入框保持焦点
+          setTimeout(() => {
+            inputRef.current?.focus();
+          }, 0);
         }
         break;
     }
