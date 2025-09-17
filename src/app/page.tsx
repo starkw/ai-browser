@@ -97,26 +97,6 @@ export default function Home() {
           )}
         </div>
         
-        {/* 功能介绍 */}
-        <div className="max-w-3xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-16">
-            <div className="text-center p-6 rounded-xl bg-blue-50 hover:bg-blue-100 transition-colors">
-              <div className="text-3xl mb-3">🧠</div>
-              <h3 className="font-semibold mb-2">自然语言理解</h3>
-              <p className="text-sm text-gray-600">支持复杂查询，如"帮我找昨天看过的关于AI的文章"</p>
-            </div>
-            <div className="text-center p-6 rounded-xl bg-purple-50 hover:bg-purple-100 transition-colors">
-              <div className="text-3xl mb-3">🔮</div>
-              <h3 className="font-semibold mb-2">智能预测</h3>
-              <p className="text-sm text-gray-600">基于历史行为预测你的下一步操作</p>
-            </div>
-            <div className="text-center p-6 rounded-xl bg-green-50 hover:bg-green-100 transition-colors">
-              <div className="text-3xl mb-3">🎯</div>
-              <h3 className="font-semibold mb-2">上下文感知</h3>
-              <p className="text-sm text-gray-600">理解当前页面内容，提供相关建议</p>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   );
