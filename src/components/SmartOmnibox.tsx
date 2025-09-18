@@ -81,16 +81,32 @@ export default function SmartOmnibox({
         if (selectedIndex >= 0 && suggestions[selectedIndex]) {
           handleSelect(suggestions[selectedIndex]);
         } else if (input.trim()) {
-          // 直接搜索
-          handleSelect({
-            id: 'direct-search',
-            type: 'search',
-            title: `搜索 "${input}"`,
-            description: '直接搜索',
-            action: `search:${input}`,
-            icon: '🔍',
-            confidence: 1.0
-          });
+          // 检查是否为URL
+          const trimmedInput = input.trim();
+          const isUrl = /^https?:\/\//i.test(trimmedInput) || 
+                       /^[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}(\/|$)/.test(trimmedInput);
+          
+          if (isUrl) {
+            // 直接打开URL
+            const url = /^https?:\/\//i.test(trimmedInput) ? trimmedInput : `https://${trimmedInput}`;
+            window.open(url, '_blank');
+            setInput('');
+            setSuggestions([]);
+            setIsOpen(false);
+            setSelectedIndex(-1);
+            inputRef.current?.blur();
+          } else {
+            // 直接搜索
+            handleSelect({
+              id: 'direct-search',
+              type: 'search',
+              title: `搜索 "${input}"`,
+              description: '直接搜索',
+              action: `search:${input}`,
+              icon: '🔍',
+              confidence: 1.0
+            });
+          }
         }
         break;
       case 'Escape':
