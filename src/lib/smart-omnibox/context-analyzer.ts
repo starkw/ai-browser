@@ -124,13 +124,16 @@ export class ContextAwareSuggestionProvider {
       suggestions.push(...this.getInputRelatedSuggestions(input, context));
     }
     
-    if (this.isGitHubPage(context)) {
-      suggestions.push(...this.getGitHubSuggestions(context));
-    }
-    
-    // 基于输入和页面内容的关联建议
-    if (input && this.hasRelatedContent(input, context)) {
-      suggestions.push(...this.getRelatedContentSuggestions(input, context));
+    // 只有在输入很短时才显示页面特定建议
+    if (input.trim().length < 3) {
+      if (this.isGitHubPage(context)) {
+        suggestions.push(...this.getGitHubSuggestions(context));
+      }
+      
+      // 基于输入和页面内容的关联建议
+      if (input && this.hasRelatedContent(input, context)) {
+        suggestions.push(...this.getRelatedContentSuggestions(input, context));
+      }
     }
     
     return suggestions;

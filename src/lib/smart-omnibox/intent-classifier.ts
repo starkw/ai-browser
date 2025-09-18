@@ -38,7 +38,14 @@ const intentPatterns = {
     /什么是.*/,
     /.*是什么意思/,
     /.*怎么理解/,
-    /说明.*/
+    /说明.*/,
+    /为什么.*/,
+    /怎么.*/,
+    /如何.*/,
+    /哪里.*/,
+    /哪个.*/,
+    /.*？$/,
+    /.*\?$/
   ],
   SEARCH: [
     /搜索.*/,
@@ -171,8 +178,8 @@ export class IntentClassifier {
         return QueryType.HISTORY_SEARCH;
       case 'summarize':
       case 'translate':
-      case 'explain':
         return QueryType.COMMAND;
+      case 'explain':
       case 'question':
         return QueryType.QUESTION;
       default:
