@@ -10,7 +10,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// NextAuth.js 相关表
 model Account {
   id                String  @id @default(cuid())
   userId            String
@@ -56,15 +55,6 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
-// 应用功能相关表
-model Note {
-  id        String   @id @default(cuid())
-  title     String
-  content   String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
 model SavedLink {
   id        String   @id @default(cuid())
   url       String
@@ -74,45 +64,40 @@ model SavedLink {
 
 // 智能地址栏相关表
 model QueryHistory {
-  id                   String   @id @default(cuid())
-  user_id              String?
-  query_text           String
-  query_type           String?
-  intent               Json?
-  context              Json?
-  selected_suggestion_id String?
-  success              Boolean  @default(false)
-  created_at           DateTime @default(now())
-
-  @@map("query_history")
+  id         String   @id @default(cuid())
+  user_id    String
+  query_text String
+  query_type String
+  intent     String
+  created_at DateTime @default(now())
+  
+  @@index([user_id])
+  @@index([created_at])
 }
 
 model UserBehavior {
-  id         String   @id @default(cuid())
-  user_id    String?
-  session_id String?
-  action     String
-  target     String?
-  context    Json?
-  timestamp  DateTime @default(now())
-
-  @@map("user_behavior")
+  id              String   @id @default(cuid())
+  user_id         String
+  action_type     String   // 'search', 'click', 'bookmark', etc.
+  target_url      String?
+  query_text      String?
+  context_data    String?  // JSON string
+  timestamp       DateTime @default(now())
+  session_id      String?
+  
+  @@index([user_id])
+  @@index([timestamp])
 }
 
-// 增强页面内容缓存
 model PageContentCache {
-  id           String    @id @default(cuid())
-  url          String    @unique
+  id           String   @id @default(cuid())
+  url          String   @unique
   title        String?
-  content      String?
-  summary      String?
-  headings     Json?
-  last_updated DateTime?
-  visit_count  Int       @default(1)
-  last_visit   DateTime?
-  keywords     String?   // 使用逗号分隔的字符串存储关键词
-  category     String?
-  created_at   DateTime  @default(now())
-
-  @@map("page_content_cache")
+  content      String?  // 页面主要内容摘要
+  keywords     String?  // 关键词，逗号分隔的字符串
+  last_visit   DateTime @default(now())
+  visit_count  Int      @default(1)
+  
+  @@index([last_visit])
+  @@index([visit_count])
 }

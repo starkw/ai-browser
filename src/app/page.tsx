@@ -13,7 +13,7 @@ export default function Home() {
         // 跳转到 AI 回答页面
         if (suggestion.action.startsWith('ask:')) {
           const query = suggestion.action.replace('ask:', '');
-          window.location.href = `/ask?q=${encodeURIComponent(query)}`;
+          window.location.href = `/ask?q=${query}`; // 不再重复编码
         }
         break;
       case 'search':
@@ -23,7 +23,7 @@ export default function Home() {
           window.open(url, '_blank');
         } else if (suggestion.action.startsWith('search:')) {
           const query = suggestion.action.replace('search:', '');
-          window.location.href = `/ask?q=${encodeURIComponent(query)}`;
+          window.location.href = `/ask?q=${query}`; // 不再重复编码
         }
         break;
       case 'history':
