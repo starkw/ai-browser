@@ -105,17 +105,23 @@ export class ContextAwareSuggestionProvider {
   generateContextSuggestions(context: PageContext, input: string): Suggestion[] {
     const suggestions: Suggestion[] = [];
     
-    // 基于页面类型的建议
-    if (this.isArticlePage(context)) {
-      suggestions.push(...this.getArticleSuggestions(context));
-    }
-    
-    if (this.isVideoPage(context)) {
-      suggestions.push(...this.getVideoSuggestions(context));
-    }
-    
-    if (this.isShoppingPage(context)) {
-      suggestions.push(...this.getShoppingSuggestions(context));
+    // 只有在输入内容很短或为空时，才提供页面相关的通用建议
+    if (input.trim().length < 3) {
+      // 基于页面类型的建议
+      if (this.isArticlePage(context)) {
+        suggestions.push(...this.getArticleSuggestions(context));
+      }
+      
+      if (this.isVideoPage(context)) {
+        suggestions.push(...this.getVideoSuggestions(context));
+      }
+      
+      if (this.isShoppingPage(context)) {
+        suggestions.push(...this.getShoppingSuggestions(context));
+      }
+    } else {
+      // 对于具体的输入，提供相关的智能建议
+      suggestions.push(...this.getInputRelatedSuggestions(input, context));
     }
     
     if (this.isGitHubPage(context)) {
@@ -271,6 +277,58 @@ export class ContextAwareSuggestionProvider {
     ];
   }
   
+  /**
+   * 基于用户输入生成相关建议
+   */
+  private getInputRelatedSuggestions(input: string, context: PageContext): Suggestion[] {
+    const suggestions: Suggestion[] = [];
+    const inputLower = input.toLowerCase();
+    
+    // 检查是否是问题类型的输入
+    const questionWords = ['什么', '为什么', '怎么', '如何', '哪里', '哪个', '谁', '何时', '多少'];
+    const isQuestion = questionWords.some(word => inputLower.includes(word)) || 
+                      inputLower.includes('?') || inputLower.includes('？');
+    
+    if (isQuestion) {
+      // 为问题类型输入提供相关建议
+      suggestions.push({
+        id: 'explain-topic',
+        type: SuggestionType.AI_ANSWER,
+        title: `详细解释：${input}`,
+        description: '获得深入的解答和分析',
+        action: `explain:${input}`,
+        icon: '🧠',
+        confidence: 0.9
+      });
+      
+      // 如果页面内容相关，提供结合页面内容的建议
+      if (this.hasRelatedContent(input, context)) {
+        suggestions.push({
+          id: 'relate-to-page',
+          type: SuggestionType.AI_ANSWER,
+          title: `结合当前页面回答：${input}`,
+          description: '基于页面内容提供相关答案',
+          action: `ask_with_context:${input}`,
+          icon: '📖',
+          confidence: 0.8
+        });
+      }
+    } else {
+      // 对于非问题类型的输入，提供搜索和学习建议
+      suggestions.push({
+        id: 'learn-about',
+        type: SuggestionType.AI_ANSWER,
+        title: `了解更多：${input}`,
+        description: '获取相关知识和信息',
+        action: `learn:${input}`,
+        icon: '📚',
+        confidence: 0.8
+      });
+    }
+    
+    return suggestions;
+  }
+
   /**
    * 获取 GitHub 页面建议
    */
