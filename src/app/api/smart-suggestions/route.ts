@@ -242,7 +242,7 @@ async function getSearchSuggestions(input: string): Promise<Suggestion[]> {
   const searchEngines = [
     { name: 'Google', icon: '🔍', url: `https://www.google.com/search?q=${encodeURIComponent(input)}` },
     { name: 'Bing', icon: '🔍', url: `https://www.bing.com/search?q=${encodeURIComponent(input)}` },
-    { name: '百度', icon: '🔍', url: `https://www.baidu.com/s?wd=${encodeURIComponent(input)}` }
+    { name: '头条', icon: '🔍', url: `https://so.toutiao.com/search?keyword=${encodeURIComponent(input)}` }
   ];
   
   return searchEngines.map((engine, index) => ({
@@ -290,15 +290,15 @@ function rankAndLimitSuggestions(suggestions: Suggestion[]): Suggestion[] {
     result.push(...byType.ai_answer.slice(0, 1));
   }
   
-  // 2. 确保 Google 和 Bing 都显示（搜索引擎多样性）
+  // 2. 确保 Google、Bing 和头条都显示（搜索引擎多样性）
   if (byType.search) {
     const googleSuggestion = byType.search.find(s => s.title.includes('Google'));
     const bingSuggestion = byType.search.find(s => s.title.includes('Bing'));
-    const baiduSuggestion = byType.search.find(s => s.title.includes('百度'));
+    const toutiaoSuggestion = byType.search.find(s => s.title.includes('头条'));
     
     if (googleSuggestion) result.push(googleSuggestion);
     if (bingSuggestion) result.push(bingSuggestion);
-    if (baiduSuggestion && result.length < 6) result.push(baiduSuggestion);
+    if (toutiaoSuggestion && result.length < 6) result.push(toutiaoSuggestion);
   }
   
   // 3. 添加其他类型的建议
