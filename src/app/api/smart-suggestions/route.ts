@@ -268,24 +268,53 @@ function rankAndLimitSuggestions(suggestions: Suggestion[]): Suggestion[] {
     return acc;
   }, [] as Suggestion[]);
   
-  // 按置信度排序
-  const sorted = unique.sort((a, b) => b.confidence - a.confidence);
-  
-  // 限制数量并确保多样性
-  const result: Suggestion[] = [];
-  const typeCount: Record<string, number> = {};
-  
-  for (const suggestion of sorted) {
-    if (result.length >= 8) break; // 最多 8 个建议
-    
-    const typeLimit = suggestion.type === 'ai_answer' ? 2 : 3;
-    if ((typeCount[suggestion.type] || 0) < typeLimit) {
-      result.push(suggestion);
-      typeCount[suggestion.type] = (typeCount[suggestion.type] || 0) + 1;
+  // 按类型分组
+  const byType: Record<string, Suggestion[]> = {};
+  unique.forEach(suggestion => {
+    if (!byType[suggestion.type]) {
+      byType[suggestion.type] = [];
     }
+    byType[suggestion.type].push(suggestion);
+  });
+  
+  // 对每个类型内部按置信度排序
+  Object.keys(byType).forEach(type => {
+    byType[type].sort((a, b) => b.confidence - a.confidence);
+  });
+  
+  // 按优先级组装结果，确保搜索引擎的多样性
+  const result: Suggestion[] = [];
+  
+  // 1. 优先添加 AI 回答（最多1个）
+  if (byType.ai_answer) {
+    result.push(...byType.ai_answer.slice(0, 1));
   }
   
-  return result;
+  // 2. 确保 Google 和 Bing 都显示（搜索引擎多样性）
+  if (byType.search) {
+    const googleSuggestion = byType.search.find(s => s.title.includes('Google'));
+    const bingSuggestion = byType.search.find(s => s.title.includes('Bing'));
+    const baiduSuggestion = byType.search.find(s => s.title.includes('百度'));
+    
+    if (googleSuggestion) result.push(googleSuggestion);
+    if (bingSuggestion) result.push(bingSuggestion);
+    if (baiduSuggestion && result.length < 6) result.push(baiduSuggestion);
+  }
+  
+  // 3. 添加其他类型的建议
+  ['history', 'command', 'url', 'bookmark'].forEach(type => {
+    if (byType[type] && result.length < 8) {
+      result.push(...byType[type].slice(0, Math.min(2, 8 - result.length)));
+    }
+  });
+  
+  // 4. 如果还有空间，添加更多AI回答
+  if (byType.ai_answer && result.length < 8) {
+    const remainingAI = byType.ai_answer.slice(1);
+    result.push(...remainingAI.slice(0, 8 - result.length));
+  }
+  
+  return result.slice(0, 8); // 最多8个建议
 }
 
 /**
