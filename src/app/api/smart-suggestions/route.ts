@@ -353,8 +353,7 @@ async function recordQueryHistory(query: SmartQuery, userId: string): Promise<vo
         user_id: userId,
         query_text: query.input,
         query_type: query.type,
-        intent: query.intent as any,
-        context: query.context as any,
+        intent: JSON.stringify(query.intent),
         created_at: new Date()
       }
     }).catch(console.error);
