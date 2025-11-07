@@ -1,6 +1,6 @@
 'use client';
 import { useState, useEffect, useRef } from 'react';
-import { SmartQuery, Suggestion, PageContext } from '@/types/smart-omnibox';
+import { SmartQuery, Suggestion, PageContext, SuggestionType } from '@/types/smart-omnibox';
 import { ContextAnalyzer } from '@/lib/smart-omnibox/context-analyzer';
 
 interface SmartOmniboxProps {
@@ -99,7 +99,7 @@ export default function SmartOmnibox({
             // 直接搜索
             handleSelect({
               id: 'direct-search',
-              type: 'search',
+              type: SuggestionType.SEARCH,
               title: `搜索 "${input}"`,
               description: '直接搜索',
               action: `search:${input}`,
