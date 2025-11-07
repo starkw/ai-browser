@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { IntentClassifier } from '@/lib/smart-omnibox/intent-classifier';
 import { PredictionEngine } from '@/lib/smart-omnibox/prediction-engine';
 import { ContextAwareSuggestionProvider } from '@/lib/smart-omnibox/context-analyzer';
-import { SmartQuery, Suggestion, QueryType, UserBehaviorModel, SmartSuggestionsRequest } from '@/types/smart-omnibox';
+import { SmartQuery, Suggestion, QueryType, SuggestionType, UserBehaviorModel, SmartSuggestionsRequest } from '@/types/smart-omnibox';
 import prisma from '@/lib/prisma';
 
 export const runtime = 'nodejs';
@@ -91,7 +91,7 @@ async function generateSuggestions(query: SmartQuery, userId?: string): Promise<
     if (query.type === QueryType.QUESTION || query.intent.action === 'question') {
       suggestions.push({
         id: 'ai-answer',
-        type: 'ai_answer' as const,
+        type: SuggestionType.AI_ANSWER,
         title: `AI 回答：${query.input}`,
         description: '使用 GPT-5 直接回答你的问题',
         action: `ask:${encodeURIComponent(query.input)}`,
@@ -220,7 +220,7 @@ async function searchHistory(target: string, modifiers: string[], userId?: strin
     
     return historyResults.map((result, index) => ({
       id: `history-${result.id}`,
-      type: 'history' as const,
+      type: SuggestionType.HISTORY,
       title: result.title || result.url,
       description: `${formatDate(result.last_visit)} 访问`,
       action: `open:${result.url}`,
@@ -247,7 +247,7 @@ async function getSearchSuggestions(input: string): Promise<Suggestion[]> {
   
   return searchEngines.map((engine, index) => ({
     id: `search-${engine.name.toLowerCase()}`,
-    type: 'search' as const,
+    type: SuggestionType.SEARCH,
     title: `在 ${engine.name} 搜索`,
     description: `"${input}"`,
     action: `open:${engine.url}`,
@@ -324,7 +324,7 @@ function getDefaultSuggestions(input: string): Suggestion[] {
   return [
     {
       id: 'default-search',
-      type: 'search' as const,
+      type: SuggestionType.SEARCH,
       title: `搜索 "${input}"`,
       description: '在 Google 中搜索',
       action: `open:https://www.google.com/search?q=${encodeURIComponent(input)}`,
@@ -333,7 +333,7 @@ function getDefaultSuggestions(input: string): Suggestion[] {
     },
     {
       id: 'default-ai',
-      type: 'ai_answer' as const,
+      type: SuggestionType.AI_ANSWER,
       title: `AI 回答：${input}`,
       description: '使用 AI 回答问题',
       action: `ask:${encodeURIComponent(input)}`,
