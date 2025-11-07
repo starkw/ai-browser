@@ -93,7 +93,7 @@ async function generateSuggestions(query: SmartQuery, userId?: string): Promise<
         id: 'ai-answer',
         type: 'ai_answer' as const,
         title: `AI 回答：${query.input}`,
-        description: '使用 DeepSeek 直接回答你的问题',
+        description: '使用 GPT-5 直接回答你的问题',
         action: `ask:${encodeURIComponent(query.input)}`,
         icon: '🤖',
         confidence: 0.9

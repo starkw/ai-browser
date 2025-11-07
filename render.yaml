@@ -10,11 +10,15 @@ services:
     envVars:
       - key: DATABASE_URL
         value: file:./dev.db
-      # 请在创建服务后在 Render 控制台里补充下面两个变量
+      # 请在创建服务后在 Render 控制台里补充下面几个变量
       # - key: NEXTAUTH_URL
       #   value: https://app.aiseach.top
       # - key: NEXTAUTH_SECRET
       #   generateValue: true
-      # - key: DEEPSEEK_API_KEY
+      # - key: GPT5_API_KEY
       #   sync: false
+      # - key: GPT5_MODEL
+      #   value: gpt-5-chat-latest
+      # - key: GPT5_BASE_URL
+      #   value: https://api.getgoapi.com/v1
 

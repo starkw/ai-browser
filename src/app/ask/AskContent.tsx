@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import type { ChatMessage } from "@/lib/deepseek";
+import type { ChatMessage } from "@/lib/gpt";
 
 export default function AskContent() {
   const [messages, setMessages] = useState<ChatMessage[]>([

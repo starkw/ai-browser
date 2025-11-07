@@ -31,6 +31,6 @@
 
 ## 约束与后续计划（建议）
 - 抽取算法：当前为 DOM 简易抽取（cheerio），后续可替换为 Readability/Boilerpipe 等
-- 摘要：当前为规则型截取示例，可接入真实大模型（OpenAI、Claude、DeepSeek 等）
+- 摘要：当前为规则型截取示例，可接入真实大模型（OpenAI GPT-5、Claude 等）
 - 功能扩展：多标签导航、历史记录/收藏、分页摘要、导出/分享
 

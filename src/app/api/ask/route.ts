@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { chatDeepSeek, type ChatMessage } from "@/lib/deepseek";
+import { chatGPT, type ChatMessage } from "@/lib/gpt";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -16,7 +16,10 @@ export async function POST(req: Request) {
     const finalMessages: ChatMessage[] = attachText
       ? [{ role: "system", content: `以下是与用户问题相关的文件内容，请结合回答：\n${attachText}` }, ...messages]
       : messages;
-    const result = await chatDeepSeek({ messages: finalMessages });
+    const result = await chatGPT({ messages: finalMessages });
+    console.log('🔍 [API] 请求模型:', process.env.GPT5_MODEL || 'gpt-5-chat-latest');
+    console.log('🔍 [API] 返回模型:', result.model);
+    console.log('🔍 [API] 返回内容:', result.text.substring(0, 100) + '...');
     return NextResponse.json(result);
   } catch (e) {
     const msg = e instanceof Error ? e.message : String(e);
